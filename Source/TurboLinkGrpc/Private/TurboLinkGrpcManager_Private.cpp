@@ -47,6 +47,11 @@ std::shared_ptr<UTurboLinkGrpcManager::Private::ServiceChannel> UTurboLinkGrpcMa
 	args.SetInt(GRPC_ARG_KEEPALIVE_TIMEOUT_MS, config->KeepAliveTimeOut);
 	args.SetInt(GRPC_ARG_KEEPALIVE_PERMIT_WITHOUT_CALLS, config->KeepAlivePermitWithoutCalls ? 1 : 0);
 	args.SetInt(GRPC_ARG_HTTP2_MAX_PINGS_WITHOUT_DATA, config->Http2MaxPingsWithoutData);
+	
+	// TODO: extract these to config
+	args.SetMaxSendMessageSize(1024*1024*20);
+	args.SetMaxReceiveMessageSize(1024*1024*20);
+	args.SetLoadBalancingPolicyName("round_robin");
 
 	//is server-side tls mode?
 	if (config->EnableServerSideTLS)
