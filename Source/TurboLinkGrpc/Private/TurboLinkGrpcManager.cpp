@@ -212,6 +212,19 @@ EGrpcServiceState UTurboLinkGrpcManager::GetServiceState(UGrpcService* Service)
 	return Service->GetServiceState();
 }
 
+void UTurboLinkGrpcManager::AddDefaultMetaData(const FString& Key, const FString& Value)
+{
+	std::string stdKey = TCHAR_TO_UTF8(*Key);
+	std::string stdValue = TCHAR_TO_UTF8(*Value);
+	
+	Private::DefaultMetadata[stdKey] = stdValue;
+	
+	for (auto& ContextPair : GrpcContextMap)
+	{
+		ContextPair.Value->RpcContext->AddMetadata(stdKey, stdValue);
+	}
+}
+
 void* UTurboLinkGrpcManager::GetNextTag(TSharedPtr<GrpcContext> Context)
 {
 	void* nextTag = (void*)(++NextTag);

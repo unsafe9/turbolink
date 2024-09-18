@@ -39,4 +39,5 @@ public:
 public:
 	std::map<std::string, std::shared_ptr<ServiceChannel>> ChannelMap;
 	std::unique_ptr<grpc::CompletionQueue> CompletionQueue;
+	static std::map<std::string, std::string> DefaultMetadata;
 };

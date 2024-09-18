@@ -43,6 +43,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = TurboLink)
 	EGrpcServiceState GetServiceState(UGrpcService* Service);
 
+	UFUNCTION(BlueprintCallable, Category = TurboLink)
+	void AddDefaultMetaData(const FString& Key, const FString& Value);
+
 protected:
 	UPROPERTY()
 	TMap<FString, UGrpcService*> WorkingService;

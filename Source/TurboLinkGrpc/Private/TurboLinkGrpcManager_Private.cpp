@@ -89,6 +89,10 @@ void UTurboLinkGrpcManager::Private::RemoveServiceChannel(std::shared_ptr<Servic
 std::unique_ptr<grpc::ClientContext> UTurboLinkGrpcManager::Private::CreateRpcClientContext(void)
 {
     std::unique_ptr<grpc::ClientContext> context = std::make_unique<grpc::ClientContext>();
+	for (auto& metaDataPair : DefaultMetadata)
+	{
+		context->AddMetadata(metaDataPair.first, metaDataPair.second);
+	}
     return context;
 }
 
