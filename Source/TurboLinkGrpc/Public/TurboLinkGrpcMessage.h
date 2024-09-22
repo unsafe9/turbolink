@@ -28,6 +28,25 @@ bool StructName::FromJsonString(const FString& JsonString) \
 	return true; \
 }
 
+#define DECLARE_STRING_FUNCTIONS() \
+      TURBOLINKGRPC_API virtual FString SerializeToString() const override; \
+      TURBOLINKGRPC_API virtual bool ParseFromString(const FString& Data) override;
+
+#define DEFINE_STRING_FUNCTIONS(StructName, GrpcStructName) \
+FString StructName::SerializeToString() const \
+{ \
+	GrpcStructName message; \
+	TURBOLINK_TO_GRPC(this, &message); \
+	return FString(StringCast<TCHAR>((const UTF8CHAR*)message.SerializeAsString().c_str()).Get()); \
+} \
+bool StructName::ParseFromString(const FString& Data) \
+{ \
+	GrpcStructName grpcMessage; \
+	if(!grpcMessage.ParseFromString(TCHAR_TO_UTF8(*Data))) return false; \
+	GRPC_TO_TURBOLINK(&grpcMessage, this); \
+	return true; \
+}
+
 USTRUCT(BlueprintType)
 struct FGrpcMessage
 {
@@ -36,6 +55,8 @@ struct FGrpcMessage
 
 	virtual FString ToJsonString(bool bPrettyMode) const { return FString(TEXT("{}")); }
 	virtual bool FromJsonString(const FString& JsonString) { return false; }
+	virtual FString SerializeToString() const { return FString(TEXT("")); }
+	virtual bool ParseFromString(const FString& Data) { return false; }
 };
 
 USTRUCT(BlueprintType, meta = (

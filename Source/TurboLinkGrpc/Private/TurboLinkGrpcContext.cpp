@@ -3,6 +3,7 @@
 #include "TurboLinkGrpcService.h"
 #include "TurboLinkGrpcManager.h"
 #include "TurboLinkGrpcModule.h"
+#include "google/rpc/status.pb.h"
 
 GrpcContext::GrpcContext(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
 	: Service(_Service)
@@ -118,5 +119,20 @@ FGrpcResult GrpcContext::MakeGrpcResult(const grpc::Status& RpcStatus)
 	EGrpcResultCode errorCode = ConvertStatusCode(RpcStatus);
 	FString message = StringCast<TCHAR>((const UTF8CHAR*)RpcStatus.error_message().c_str()).Get();
 
-	return FGrpcResult(errorCode, message);
+	TArray<FString> details;
+	if (RpcStatus.error_details().size() > 0)
+	{
+		google::rpc::Status status;
+		if (status.ParseFromString(RpcStatus.error_details()))
+		{
+			for (int i = 0; i < status.details_size(); i++)
+			{
+				const google::protobuf::Any& detail = status.details(i);
+				FString detailString = StringCast<TCHAR>((const UTF8CHAR*)detail.value().c_str()).Get();
+				details.Add(detailString);
+			}
+		}
+	}
+	
+	return FGrpcResult(errorCode, message, details);
 }

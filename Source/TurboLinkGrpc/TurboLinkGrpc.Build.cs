@@ -37,6 +37,7 @@ public class TurboLinkGrpc : ModuleRules
 		AddEngineThirdPartyPrivateStaticDependencies(Target, "zlib");
 
 		PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private/pb"));
+		PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private/ThirdParty"));
 
 		//ThirdParty include
 		PrivateIncludePaths.AddRange(

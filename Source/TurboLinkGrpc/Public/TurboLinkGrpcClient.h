@@ -53,12 +53,27 @@ struct TURBOLINKGRPC_API FGrpcResult
 	
 	UPROPERTY(BlueprintReadWrite, Category = TurboLink)
 	FString Message;
+	
+	UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+	TArray<FString> Details;
 
 	FString GetCodeString() const;
 	FString GetMessageString() const;
 
+	template<class T>
+	T GetDetail(int32 Index) const
+	{
+		if (Details.IsValidIndex(Index))
+		{
+			T Result;
+			Result.ParseFromString(Details[Index]);
+			return Result;
+		}
+		return T();
+	}
+
 	FGrpcResult() : Code(EGrpcResultCode::NotDefined), Message(TEXT("")) { }
-	FGrpcResult(EGrpcResultCode _Code, const FString& _Message) : Code(_Code), Message(_Message) { }
+	FGrpcResult(EGrpcResultCode _Code, const FString& _Message, const TArray<FString>& _Details = TArray<FString>()) : Code(_Code), Message(_Message), Details(_Details) { }
 };
 
 USTRUCT(BlueprintType)
